@@ -14,7 +14,6 @@ function profile_test(n)
     end
 end
 
-
 @testset "ProfileVega" begin
 
 p1 = @profview profile_test(2)
