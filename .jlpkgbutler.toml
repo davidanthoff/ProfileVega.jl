@@ -1,0 +1,1 @@
+strategy-matrix-exclude = "julia-arch: x86"
