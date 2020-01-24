@@ -48,6 +48,8 @@ The following screenshot illustrates Jupyter usage on a demonstration function `
 
 You can hover over individual blocks in the flame graph to get more detailed information.
 
+You can pan the picture via drag and drop, and zoom via your mouse wheel.
+
 ### Exporting figures
 
 Even if you don't use Jupyter, you might want to export a flame graph as
