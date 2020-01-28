@@ -5,6 +5,18 @@ using VegaLite: save
 
 export @profview, save
 
+mutable struct Options
+    width::Int
+    height::Int
+end
+
+global _options = Options(800, 400)
+
+function set_default_size(width, height)
+    _options.width = width
+    _options.height = height
+end
+
 function _add_node_to_data!(data, node, indent)
     push!(data, (level=indent, status=node.data.status==0 ? "Default" : node.data.status==1 ? "Runtime dispatch" : "Garbage collection", x1=node.data.span.start, x2=node.data.span.stop+.9, sf=string(node.data.sf)))
     for child in node
@@ -12,7 +24,7 @@ function _add_node_to_data!(data, node, indent)
     end
 end
 
-function _plotflamegraph(node)
+function _plotflamegraph(node; kwargs...)
     data = Vector{NamedTuple{(:level, :status, :x1, :x2, :sf), Tuple{Int,String,Float64,Float64,String}}}(undef, 0)
     _add_node_to_data!(data, node, 0)
 
@@ -36,8 +48,8 @@ function _plotflamegraph(node)
             {selection=:select, value=0.5}
             ],
             value=0},
-        width=800,
-        height=400,
+        width=get(kwargs, :width, _options.width),
+        height=get(kwargs, :height, _options.height),
         color={"status:n", legend={title=nothing, orient=:bottom}},
         tooltip=:sf,
         title="Profile Results"
@@ -51,9 +63,9 @@ View profiling results. See [FlameGraphs](https://github.com/timholy/FlameGraphs
 for options for `kwargs`.
 """
 function view(data::Vector{UInt64}=Profile.fetch(); kwargs...)
-    g = FlameGraphs.flamegraph(data; kwargs...)
+    g = FlameGraphs.flamegraph(data; filter(x -> !(x[1] in fieldnames(Options)), kwargs)...)
 
-    return _plotflamegraph(g)
+    return _plotflamegraph(g; kwargs...)
 end
 
 """
@@ -61,11 +73,11 @@ end
 
 Clear the Profile buffer, profile `f(args...)`, and view the result graphically.
 """
-macro profview(ex)
+macro profview(ex, args...)
     return quote
         Profile.clear()
         Profile.@profile $(esc(ex))
-        view()
+        view(;$(esc.(args)...))
     end
 end
 

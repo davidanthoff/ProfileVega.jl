@@ -47,6 +47,23 @@ You can hover over individual blocks in the flame graph to get more detailed inf
 
 You can pan the picture via drag and drop, and zoom via your mouse wheel.
 
+You can adjust the size of the picture by passing `width` and `height` arguments
+
+```julia
+@profview f(args...) width = 800 height = 600
+
+# or alternatively
+Profile.clear()
+@profile f(args...)
+ProfileVega.view(width = 800, height = 600)
+```
+
+Size parameters can also be set globally
+
+```julia
+ProfileView.set_default_size(800, 600)
+```
+
 ### Exporting figures
 
 Even if you don't use Jupyter, you might want to export a flame graph as
