@@ -1,7 +1,7 @@
 name = "ProfileVega"
 uuid = "4391764f-db79-4bd7-a4c6-f9062de4300e"
 authors = ["David Anthoff <anthoff@berkeley.edu>"]
-version = "1.0.0"
+version = "1.0.1-DEV"
 
 [deps]
 FlameGraphs = "08572546-2f56-4bcf-ba4e-bab62c3a3f89"
