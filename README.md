@@ -15,9 +15,6 @@ figure display. It is essentially just an "export" package built on top of
 
 An alternative visualization package is the GTK-based
 [ProfileView](https://github.com/timholy/ProfileView.jl).
-That package offers more interactive features, like the ability to
-pan & zoom, as well as the ability to open source files by clicking on
-elements of the flame graph.
 
 Among the Julia packages, [ProfileView](https://github.com/timholy/ProfileView.jl)
 currently has the most comprehensive tutorial on how to interpret a flame graph.
