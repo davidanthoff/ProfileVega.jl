@@ -17,20 +17,28 @@ function _plotflamegraph(node)
     _add_node_to_data!(data, node, 0)
 
     return data |> VegaLite.@vlplot(
-        :rect,
+        mark={type=:rect, stroke="#505050"},
         transform=[{calculate="datum.level+0.9", as=:level2}],
         selection={grid={type=:interval, bind=:scales},
-            pts={type=:single, on=:mouseover, empty=:none}},
+            highlight={type=:single, on=:mouseover, empty=:none},
+            select={type=:multi, empty=:none}},
         x={:x1, axis=nothing},
         x2=:x2,
         y={"level:q", axis=nothing},
         y2={"level2:q"},
+        fillOpacity={condition=[
+                {selection=:highlight, value=0.6},
+                {selection=:select, value=0.5}
+            ],
+            value=1},
+        strokeWidth={condition=[
+            {selection=:highlight, value=0.5},
+            {selection=:select, value=0.5}
+            ],
+            value=0},
         width=800,
         height=400,
-        color={"status:n", legend={title=nothing, orient=:bottom},
-            condition={
-                selection=:pts, value=:lightgreen
-            }},
+        color={"status:n", legend={title=nothing, orient=:bottom}},
         tooltip=:sf,
         title="Profile Results"
     )
