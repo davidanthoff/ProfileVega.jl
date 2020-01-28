@@ -13,20 +13,24 @@ function _add_node_to_data!(data, node, indent)
 end
 
 function _plotflamegraph(node)
-    data = Vector{NamedTuple{(:level, :status, :x1, :x2, :sf), Tuple{Int,String,Float64,Float64,String}}}(undef, 0)    
+    data = Vector{NamedTuple{(:level, :status, :x1, :x2, :sf), Tuple{Int,String,Float64,Float64,String}}}(undef, 0)
     _add_node_to_data!(data, node, 0)
-    
+
     return data |> VegaLite.@vlplot(
         :rect,
         transform=[{calculate="datum.level+0.9", as=:level2}],
-        selection={grid={type=:interval, bind=:scales}},
+        selection={grid={type=:interval, bind=:scales},
+            pts={type=:single, on=:mouseover, empty=:none}},
         x={:x1, axis=nothing},
         x2=:x2,
         y={"level:q", axis=nothing},
         y2={"level2:q"},
         width=800,
         height=400,
-        color={"status:n", legend={title=nothing, orient=:bottom}},
+        color={"status:n", legend={title=nothing, orient=:bottom},
+            condition={
+                selection=:pts, value=:lightgreen
+            }},
         tooltip=:sf,
         title="Profile Results"
     )
