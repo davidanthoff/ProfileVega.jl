@@ -3,6 +3,7 @@ module TestDiffView
 using Test
 using LeftChildRightSiblingTrees
 using ProfileVega
+using VegaLite
 using ProfileVega: islastsibling, lcs
 
 eq(x::Node{Int}, y::Node{Int}) = x.data == y.data
