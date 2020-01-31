@@ -95,3 +95,72 @@ Profile.clear()
 # Save a graph that looks like the Jupyter example above
 ProfileVega.view() |> save("prof.svg")
 ```
+
+### Differential Flame Graphs
+Differential flame graphs based on [Brendan Gregg](http://www.brendangregg.com/blog/2014-11-09/differential-flame-graphs.html) blog post and is a useful tool for comparison code before and after changes. It works like this
+
+* Take `baseline` stack profile.
+* Take `target` stack profile.
+* Generate a flame graph using target. (This sets the width of all frames using target profile)
+* Colorize the flame graph using the "target - baseline" delta. If a frame appeared more times in 2, it is red, less times, it is blue. The saturation is relative to the delta.
+
+The intent is for use with before & after profiles, such as for non-regression testing or benchmarking code changes.
+
+Here is a demonstration:
+
+```julia
+function f1(n)
+    res = 0
+    for _ in 1:n
+        res += sum(rand(10_000))
+    end
+
+    for _ in 1:n
+        res -= sum(rand(10_000))
+    end
+    res
+end
+
+function f2(n)
+    res = 0
+    for _ in 1:n
+        res += sum(rand(20_000))
+    end
+
+    for _ in 1:n
+        A = randn(10, 10, 10)
+        res += maximum(A)
+    end
+
+    for _ in 1:n
+        res -= sum(rand(5_000))
+    end
+    res
+end
+
+f1(1) # run once to compile
+f2(1) # run once to compile
+
+using ProfileVega
+baseline = @profbase f1(10000);
+@profdiffview baseline f2(10000)
+```
+
+Results are shown on the following screenshot
+
+![profdiffview](images/diffflame.png)
+
+As it can be seen generally it took longer to execute function `f2`. Most of this increased time is due to
+the first `sum(rand(20_000))` cycle as expected, on the other hand second cycle `sum(rand(5_000))` took less
+time to execute and therefore shown in blue. In the middle between these two cycles new node appeared which corresponds
+to the second cycle. Since there is nothing to compare to it is shown in gray.
+
+Sometimes it is useful to compare baseline graph versus new benchmarks. ONe can use `negate` keyword for that
+
+```julia
+@profdiffview baseline f2(10000) negate = true
+```
+
+with the following result
+
+![profdiffview](images/diffflame_negate.png)
