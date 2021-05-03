@@ -1,7 +1,7 @@
 name = "ProfileVega"
 uuid = "4391764f-db79-4bd7-a4c6-f9062de4300e"
 authors = ["David Anthoff <anthoff@berkeley.edu>"]
-version = "1.1.1"
+version = "1.1.2-DEV"
 
 [deps]
 LeftChildRightSiblingTrees = "1d6d02ad-be62-4b6b-8a6d-2f90e265016e"
